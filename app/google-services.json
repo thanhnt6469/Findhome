@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "758763062278",
+    "firebase_url": "https://findhomeapp-f35c6-default-rtdb.firebaseio.com",
+    "project_id": "findhomeapp-f35c6",
+    "storage_bucket": "findhomeapp-f35c6.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:758763062278:android:8323725b8be04f69182f87",
+        "android_client_info": {
+          "package_name": "com.app.findhome"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "758763062278-9spd8cjgisu1ff29ke8cp8veug70sa0e.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.app.findhome",
+            "certificate_hash": "fe9e701177dedea09a461d0d7ab6d33afd303490"
+          }
+        },
+        {
+          "client_id": "758763062278-mcd2avaj2i2gjs4vm1u12f0ga1qgno1h.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyABJv7San6Prrel8YB0z5wbVCmKPmgOM3k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "758763062278-2no99242df6n9dji8b4nn3e4lr02di33.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
