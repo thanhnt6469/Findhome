@@ -18,9 +18,13 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.navArgument
 import androidx.navigation.compose.rememberNavController
 import com.app.findhome.ui.components.BottomBar
 import com.app.findhome.ui.navigation.AppPage
+import com.app.findhome.ui.pages.favorite.FavoritePage
+import com.app.findhome.ui.pages.favorite.FavoriteViewModel
+import com.app.findhome.ui.pages.home.HomePage
 import com.app.findhome.ui.pages.login.GoogleAuthUiClient
 import com.app.findhome.ui.pages.login.GoogleLoginScreen
 import com.app.findhome.ui.pages.login.GoogleSignupScreen
@@ -51,6 +55,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             AppTheme {
                 val navController = rememberNavController()
+                val favoriteViewModel: FavoriteViewModel = hiltViewModel()
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
                     bottomBar = {
@@ -80,6 +85,14 @@ class MainActivity : ComponentActivity() {
 
                         composable(route = AppPage.SignupPage.route) {
                             GoogleSignupScreen(navController = navController, googleAuthUiClient = googleAuthUiClient, activity = this@MainActivity)
+                        }
+
+                        composable(route = AppPage.HomePage.route) {
+                            HomePage(navController = navController, favoriteViewModel = favoriteViewModel)
+                        }
+
+                        composable(route = AppPage.FavoritePage.route) {
+                            FavoritePage(navController = navController, favoriteViewModel = favoriteViewModel)
                         }
                     }
                 }
