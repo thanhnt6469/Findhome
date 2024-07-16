@@ -20,14 +20,24 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.navArgument
 import androidx.navigation.compose.rememberNavController
+import com.app.findhome.data.model.User
 import com.app.findhome.ui.components.BottomBar
 import com.app.findhome.ui.navigation.AppPage
+import com.app.findhome.ui.pages.article.ArticlePage
+import com.app.findhome.ui.pages.article.EditArticlePage
+import com.app.findhome.ui.pages.details.DetailPage
 import com.app.findhome.ui.pages.favorite.FavoritePage
 import com.app.findhome.ui.pages.favorite.FavoriteViewModel
 import com.app.findhome.ui.pages.home.HomePage
 import com.app.findhome.ui.pages.login.GoogleAuthUiClient
 import com.app.findhome.ui.pages.login.GoogleLoginScreen
 import com.app.findhome.ui.pages.login.GoogleSignupScreen
+import com.app.findhome.ui.pages.message.ChatListPage
+import com.app.findhome.ui.pages.message.ChatPage
+import com.app.findhome.ui.pages.message.ChatViewModel
+import com.app.findhome.ui.pages.profile.ProfilePage
+import com.app.findhome.ui.pages.profile.ProfileViewModel
+import com.app.findhome.ui.pages.profile.UserProfilePage
 import com.app.findhome.ui.theme.AppTheme
 import com.google.android.gms.auth.api.identity.Identity
 import com.google.firebase.FirebaseApp
@@ -56,6 +66,8 @@ class MainActivity : ComponentActivity() {
             AppTheme {
                 val navController = rememberNavController()
                 val favoriteViewModel: FavoriteViewModel = hiltViewModel()
+                val profileViewModel: ProfileViewModel = hiltViewModel()
+                val chatViewModel: ChatViewModel = hiltViewModel()
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
                     bottomBar = {
@@ -93,6 +105,73 @@ class MainActivity : ComponentActivity() {
 
                         composable(route = AppPage.FavoritePage.route) {
                             FavoritePage(navController = navController, favoriteViewModel = favoriteViewModel)
+                        }
+
+                        composable(
+                            route = "${AppPage.DetailPage.route}/{propertyId}",
+                            arguments = listOf(navArgument("propertyId") { type = NavType.StringType })
+                        ) { backStackEntry ->
+                            val propertyId = backStackEntry.arguments?.getString("propertyId") ?: ""
+                            DetailPage(navController = navController, favoriteViewModel = favoriteViewModel, propertyId = propertyId)
+                        }
+
+                        composable(route = AppPage.ArticlePage.route) {
+                            ArticlePage(navController = navController, userData = googleAuthUiClient.getLoggedInUser())
+                        }
+
+                        composable(
+                            route = "${AppPage.ChatPage.route}/{userId}/{nameGuest}",
+                            arguments = listOf(
+                                navArgument("userId") { type = NavType.StringType },
+                                navArgument("nameGuest") { type = NavType.StringType }
+                            )
+                        ) {backStackEntry ->
+                            val userIdGuest = backStackEntry.arguments?.getString("userId") ?: ""
+                            val nameGuest = backStackEntry.arguments?.getString("nameGuest") ?: ""
+                            val userIdCurrent = FirebaseAuth.getInstance().currentUser?.uid
+                            val nameCurrent = googleAuthUiClient.getLoggedInUser()?.fullName
+                            if (userIdCurrent != null && nameCurrent != null) {
+                                ChatPage(
+                                    currentUser = User(userId = userIdCurrent, fullName = nameCurrent),
+                                    otherUser = User(userId = userIdGuest, fullName = nameGuest),
+                                    navController = navController,
+                                )
+                            }
+                        }
+
+                        composable(route = AppPage.ChatListPage.route) {
+                            val userIdCurrent = FirebaseAuth.getInstance().currentUser?.uid
+                            val nameCurrent = googleAuthUiClient.getLoggedInUser()?.fullName
+                            val profilePictureUrl = googleAuthUiClient.getLoggedInUser()?.profilePictureUrl
+                            val state by chatViewModel.state.collectAsState()
+                            if (userIdCurrent != null && profilePictureUrl != null && nameCurrent != null) {
+                                ChatListPage(
+                                    currentUser = User(userId = userIdCurrent, fullName = nameCurrent, profilePictureUrl = profilePictureUrl),
+                                    state,
+                                    navController = navController,
+                                    chatViewModel = chatViewModel
+                                )
+                            }
+                        }
+
+                        composable(route = AppPage.ProfilePage.route) {
+                            ProfilePage(navController = navController, userData = googleAuthUiClient.getLoggedInUser(), favoriteViewModel, profileViewModel)
+                        }
+
+                        composable(
+                            route = "${AppPage.UserProfilePage.route}/{userId}",
+                            arguments = listOf(navArgument("userId") { type = NavType.StringType })
+                        ) { backStackEntry ->
+                            val userId = backStackEntry.arguments?.getString("userId") ?: ""
+                            UserProfilePage(userId = userId,navController = navController, favoriteViewModel = favoriteViewModel)
+                        }
+
+                        composable(
+                            route = "${AppPage.EditArticlePage.route}/{propertyId}",
+                            arguments = listOf(navArgument("propertyId") { type = NavType.StringType })
+                        ) { backStackEntry ->
+                            val propertyId = backStackEntry.arguments?.getString("propertyId") ?: ""
+                            EditArticlePage(navController = navController, propertyId = propertyId)
                         }
                     }
                 }
